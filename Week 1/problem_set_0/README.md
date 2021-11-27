@@ -1,3 +1,7 @@
+To play the game, visit https://scratch.mit.edu/projects/607711889
+
+Or download the .sb3 file and load it into scratch.
+
 current version (11/25/2021 16:56)
 
 a game made on Scratch
