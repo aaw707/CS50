@@ -7,7 +7,7 @@
 // helper function
 char cipher(char x, char key[], char alphabet[]);
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     // check if there's only one input
     if (argc != 2)

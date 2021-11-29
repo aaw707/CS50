@@ -1,0 +1,91 @@
+sort1 uses: bubble sort
+
+How do you know?: see below
+
+sort2 uses: merge sort
+
+How do you know?: see below
+
+sort3 uses: selection sort
+
+How do you know?: see below
+
+Optimum situation:
+Bubble sort: omega n. go through the list once and see it's already sorted and quit
+Selection sort: omega n^2
+Merge sort: omega nlog n
+
+Worst situation:
+Bubble sort: O n^2
+Selection sort: O n^2
+Merge sort: O nlog n
+
+Random situation:
+Bubble sort: slower than selection sort due to an additional swap step
+Selection sort: quicker than bubble sort. only swap once in each loop
+Merge sort: always theta nlog n
+
+for sorted lists, bubble sort should be the fastest, then merge, then selection
+for reversed lists, merge sort should be the fastest, then selection, then bubble
+for random lists, merge sort is the fastest, then selection, then bubble
+
+sorted5000.txt
+sort1: 0.014s
+sort2: 0.013s
+sort3: 0.108s
+
+sorted10000.txt
+sort1: 0.021s
+sort2: 0.048s
+sort3: 0.335s
+
+sorted50000.txt
+sort1: 2.343s
+sort2: 5.165s
+sort3: 7.942s
+
+sort1 is the fastest, then sort2, and sort 3
+sort1 should be bubble sort
+sort2 should be merge sort
+sort3 should be selection sort
+
+to prove the assumption, run the reversed lists
+the speed rank shoule be 2, 3, 1
+also the speed of 2 should be similar to the speed of 2 for sorted files
+
+reversed5000.txt
+1: 0.099
+2: 0.013
+3: 0.068
+
+reversed10000.txt
+1: 0.373
+2: 0.043
+3: 0.292
+
+reversed50000.txt
+1: 14.076
+2: 3.683
+3: 8.369
+
+running the reversed lists confirmed the assumption
+to double check, run the random lists
+the speed rank should be 2, 3, 1
+also the speed of 2 should be similar to the speed of 2 for sorted/reversed files
+
+random5000.txt
+1: 0.105
+2: 0.015
+3: 0.033
+
+random10000.txt
+1: 0.505
+2: 0.114
+3: 0.239
+
+random50000.txt
+1: 14.542
+2: 3.692
+3: 7.181
+
+confirms again
