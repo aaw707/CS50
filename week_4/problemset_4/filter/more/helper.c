@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 RGBTRIPLE blur_pixel(RGBTRIPLE arr[], int num_rgbt);
-RGBTRIPLE weighted_sum(RGBTRIPLE pixel_box[9] , int Gx[9], int Gy[9]);
 
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
@@ -186,206 +185,60 @@ RGBTRIPLE blur_pixel(RGBTRIPLE arr[], int num_rgbt)
 void edges(int height, int width, RGBTRIPLE image[height][width])
 {
     // create the kernels
-    int Gx[9] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
-    int Gy[9] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+    int Gx[3][3] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
+    int Gy[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
 
-    // allocate temp memory for blurring
+    // allocate temp memory for detecting the edges
     RGBTRIPLE(*temp)[width] = calloc(height, width * sizeof(RGBTRIPLE));
-    // declare a 3x3 pixel box around the current pixel
-    RGBTRIPLE pixel_box[9];
-    // assign the black border
-    RGBTRIPLE black_border;
-    black_border.rgbtRed = 0;
-    black_border.rgbtGreen = 0;
-    black_border.rgbtBlue = 0;
 
-    // go through each pixel to get the weighted pixels in temp
-
-    // top left corner
-    pixel_box[0] = black_border;
-    pixel_box[1] = black_border;
-    pixel_box[2] = black_border;
-    pixel_box[3] = black_border;
-    pixel_box[4] = image[0][0];
-    pixel_box[5] = image[0][1];
-    pixel_box[6] = black_border;
-    pixel_box[7] = image[1][0];
-    pixel_box[8] = image[1][1];
-    temp[0][0] = weighted_sum(pixel_box, Gx, Gy);
-
-    // top right corner
-    pixel_box[0] = black_border;
-    pixel_box[1] = black_border;
-    pixel_box[2] = black_border;
-    pixel_box[3] = image[0][width - 2];
-    pixel_box[4] = image[0][width - 1];
-    pixel_box[5] = black_border;
-    pixel_box[6] = image[1][width - 2];
-    pixel_box[7] = image[1][width - 1];
-    pixel_box[8] = black_border;
-    temp[0][width - 1] = weighted_sum(pixel_box, Gx, Gy);
-
-    // bottom left corner
-    pixel_box[0] = black_border;
-    pixel_box[1] = image[height - 2][0];
-    pixel_box[2] = image[height - 2][1];
-    pixel_box[3] = black_border;
-    pixel_box[4] = image[height - 1][0];
-    pixel_box[5] = image[height - 1][1];
-    pixel_box[6] = black_border;
-    pixel_box[7] = black_border;
-    pixel_box[8] = black_border;
-    temp[height - 1][0] = weighted_sum(pixel_box, Gx, Gy);
-
-    // bottom right corder
-    pixel_box[0] = image[height - 2][width - 2];
-    pixel_box[1] = image[height - 2][width - 1];
-    pixel_box[2] = black_border;
-    pixel_box[3] = image[height - 1][width - 2];
-    pixel_box[4] = image[height - 1][width - 1];
-    pixel_box[5] = black_border;
-    pixel_box[6] = black_border;
-    pixel_box[7] = black_border;
-    pixel_box[8] = black_border;
-    temp[height - 1][width - 1] = weighted_sum(pixel_box, Gx, Gy);
-
-    // top row
-    for (int j = 1; j < width - 1; j++)
-    {
-        pixel_box[0] = black_border;
-        pixel_box[1] = black_border;
-        pixel_box[2] = black_border;
-        pixel_box[3] = image[0][j - 1];
-        pixel_box[4] = image[0][j];
-        pixel_box[5] = image[0][j + 1];
-        pixel_box[6] = image[1][j - 1];
-        pixel_box[7] = image[1][j];
-        pixel_box[8] = image[1][j + 1];
-        temp[0][j] = weighted_sum(pixel_box, Gx, Gy);
-    }
-
-    // bottom row
-    for (int j = 1; j < width - 1; j++)
-    {
-        pixel_box[0] = image[height - 2][j - 1];
-        pixel_box[1] = image[height - 2][j];
-        pixel_box[2] = image[height - 2][j + 1];
-        pixel_box[3] = image[height - 1][j - 1];
-        pixel_box[4] = image[height - 1][j];
-        pixel_box[5] = image[height - 1][j + 1];
-        pixel_box[6] = black_border;
-        pixel_box[7] = black_border;
-        pixel_box[8] = black_border;
-        temp[height - 1][j] = weighted_sum(pixel_box, Gx, Gy);
-    }
-
-    // left column
-    for (int i = 1; i < height - 1; i++)
-    {
-        pixel_box[0] = black_border;
-        pixel_box[1] = image[i - 1][0];
-        pixel_box[2] = image[i - 1][1];
-        pixel_box[3] = black_border;
-        pixel_box[4] = image[i][0];
-        pixel_box[5] = image[i][1];
-        pixel_box[6] = black_border;
-        pixel_box[7] = image[i + 1][0];
-        pixel_box[8] = image[i + 1][1];
-        temp[i][0] = weighted_sum(pixel_box, Gx, Gy);
-    }
-
-    // right column
-    for (int i = 1; i < height - 1; i++)
-    {
-        pixel_box[0] = image[i - 1][width - 2];
-        pixel_box[1] = image[i - 1][width - 1];
-        pixel_box[2] = black_border;
-        pixel_box[3] = image[i][width - 2];
-        pixel_box[4] = image[i][width - 1];
-        pixel_box[5] = black_border;
-        pixel_box[6] = image[i + 1][width - 2];
-        pixel_box[7] = image[i + 1][width - 1];
-        pixel_box[8] = black_border;
-        temp[i][width - 1] = weighted_sum(pixel_box, Gx, Gy);
-    }
-
-    // middle pixels
+    // loop through the pixels
     for (int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
         {
-            pixel_box[0] = image[i - 1][j - 1];
-            pixel_box[1] = image[i - 1][j];
-            pixel_box[2] = image[i - 1][j + 1];
-            pixel_box[3] = image[i][j - 1];
-            pixel_box[4] = image[i][j];
-            pixel_box[5] = image[i][j + 1];
-            pixel_box[6] = image[i + 1][j - 1];
-            pixel_box[7] = image[i + 1][j];
-            pixel_box[8] = image[i + 1][j + 1];
-            temp[i][j] = weighted_sum(pixel_box, Gx, Gy);
+            int row_coords[3] = {i - 1, i, i + 1};
+            int col_coords[3] = {j - 1, j, j + 1};
+            // declare the variables to keep track of the sums
+            int Gx_red = 0, Gx_green = 0, Gx_blue = 0;
+            int Gy_red = 0, Gy_green = 0, Gy_blue = 0;
+
+            // loop through the 3x3 box
+            for (int m = 0; m < 3; m++)
+            {
+                for (int n = 0; n < 3; n++)
+                {
+                    int row = row_coords[m];
+                    int col = col_coords[n];
+                    if (row >= 0 && row < height && col >= 0 && col < width)
+                    {
+                        Gx_red += image[row_coords[m]][col_coords[n]].rgbtRed * Gx[m][n];
+                        Gx_green += image[row_coords[m]][col_coords[n]].rgbtGreen * Gx[m][n];
+                        Gx_blue += image[row_coords[m]][col_coords[n]].rgbtBlue * Gx[m][n];
+
+                        Gy_red += image[row_coords[m]][col_coords[n]].rgbtRed * Gy[m][n];
+                        Gy_green += image[row_coords[m]][col_coords[n]].rgbtGreen * Gy[m][n];
+                        Gy_blue += image[row_coords[m]][col_coords[n]].rgbtBlue * Gy[m][n];
+                    }
+                }
+            }
+            int weight_red = round(sqrt(pow(Gx_red, 2) + pow(Gy_red, 2)));
+            int weight_green = round(sqrt(pow(Gx_green, 2) + pow(Gy_green, 2)));
+            int weight_blue = round(sqrt(pow(Gx_blue, 2) + pow(Gy_blue, 2)));
+            temp[i][j].rgbtRed = weight_red > 255 ? 255 : weight_red;
+            temp[i][j].rgbtGreen = weight_green > 255 ? 255 : weight_green;
+            temp[i][j].rgbtBlue = weight_blue > 255 ? 255 : weight_blue;
         }
     }
 
-    // loop through each pixel again to get the temp value saved into image
+    // copy the pixels from temp to image
     for (int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
         {
             image[i][j] = temp[i][j];
-            printf("%i, %i, %i\n", temp[i][j].rgbtRed, temp[i][j].rgbtGreen, temp[i][j].rgbtBlue);
         }
     }
+
     free(temp);
     return;
-}
-
-RGBTRIPLE weighted_sum(RGBTRIPLE pixel_box[9] , int Gx[9], int Gy[9])
-{
-    // print out the pixel box
-    /*
-    for (int i = 0; i < 9; i++)
-    {
-        printf("pixel_box[%i] Red: %i\n", i, pixel_box[i].rgbtRed);
-    }
-    */
-
-    // declare the variables to keep track of the sums
-    int Gx_sum_red = 0;
-    int Gy_sum_red = 0;
-    int Gx_sum_green = 0;
-    int Gy_sum_green = 0;
-    int Gx_sum_blue = 0;
-    int Gy_sum_blue = 0;
-    // loop through the pixel box
-    for (int m = 0; m < 9; m++)
-    {
-        // get the sum by multiplying the pixel box with the kernels
-        Gx_sum_red += pixel_box[m].rgbtRed * Gx[m];
-        //printf("%i\n", pixel_box[m].rgbtRed);
-        //printf("%i\n", Gx[m]);
-        //printf("%i\n", Gx_sum_red);
-        Gy_sum_red += pixel_box[m].rgbtRed * Gy[m];
-        Gx_sum_green += pixel_box[m].rgbtGreen * Gx[m];
-        Gy_sum_green += pixel_box[m].rgbtGreen * Gy[m];
-        Gx_sum_blue += pixel_box[m].rgbtBlue * Gx[m];
-        Gy_sum_blue += pixel_box[m].rgbtBlue * Gy[m];
-    }
-    // print
-    printf("%i\n", Gx_sum_red);
-    printf("%i\n", Gy_sum_red);
-    // get the weighted sum from Gx and Gy sum
-    int weighted_red = round(sqrt(pow(Gx_sum_red, 2) + pow(Gy_sum_red, 2)));
-    int weighted_green = round(sqrt(pow(Gx_sum_green, 2) + pow(Gy_sum_green, 2)));
-    int weighted_blue = round(sqrt(pow(Gx_sum_blue, 2) + pow(Gy_sum_blue, 2)));
-    printf("%f\n", sqrt(pow(Gx_sum_red, 2) + pow(Gy_sum_red, 2)));
-    printf("%i\n", weighted_red);
-
-    // construct the weighted pixel
-    RGBTRIPLE weighted_pixel;
-    weighted_pixel.rgbtRed = weighted_red;
-    weighted_pixel.rgbtGreen = weighted_green;
-    weighted_pixel.rgbtBlue = weighted_blue;
-    // return the weighted pixel
-    return weighted_pixel;
 }
