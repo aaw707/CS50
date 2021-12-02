@@ -1,5 +1,6 @@
 // Implements a dictionary's functionality
-// files other than this are provided by the project
+// other than the helper functions in this file,
+// everything else is provided by the project
 
 #include <stdbool.h>
 #include <stdio.h>
