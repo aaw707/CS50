@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sold
+{% endblock %}
+
+{% block main %}
+
+<h2>You have successfully sold the following stock:</h2>
+<hr>
+
+<h4>Symbol</h4>
+<text>{{ symbol }}</text>
+<br>
+<br>
+<br>
+
+<h4>Shares</h4>
+<text>{{ shares }}</text>
+<br>
+<br>
+<br>
+
+<h4>Price</h4>
+<text>{{ total_price | usd }}</text>
+<br>
+<br>
+<br>
+
+<h4>Current Balance</h4>
+<text>{{ current_balance | usd }}</text>
+<br>
+<br>
+<br>
+
+{% endblock %}
